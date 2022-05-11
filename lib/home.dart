@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-//import 'package:flutter/rendering.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,10 +14,17 @@ class _HomeState extends State<Home> {
   List contacts = [];
   late String newUser;
 
+  void initFirebase() async{
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+  }
+
   @override
   void initState() {
-
     super.initState();
+
+    initFirebase();
+
     contacts.addAll(['Константин', 'Родиончик', 'Мирослава']);
   }
 
@@ -100,15 +106,15 @@ class _HomeState extends State<Home> {
         showDialog(context: context, builder: (BuildContext context){
           return AlertDialog(
             backgroundColor: Colors.white,
-            title: new Container(
-              alignment: Alignment.center,
-              color: Colors.blueAccent[200],
+            title: Container(
+                alignment: Alignment.center,
+                color: Colors.blueAccent[200],
                 width: double.infinity,
                 height: 45,
                 child: const Text('Добавить клиента', textAlign: TextAlign.center, style: TextStyle(color: Colors.white),)),
             content: TextField(
               onChanged: (String value){
-            newUser = value;
+                newUser = value;
           },
           ),
 
@@ -129,12 +135,11 @@ class _HomeState extends State<Home> {
                   }, child: const Text('Cancel'))),
                   SizedBox(width: 15),
                   Expanded(
-                    //width: 100,
-                    child: ElevatedButton(onPressed: (){
-                    setState(() {
-                      contacts.add(newUser);
-                    });
-                    Navigator.of(context).pop();
+                      child: ElevatedButton(onPressed: (){
+                        setState(() {
+                          FirebaseFirestore.instance.collection('clients').add({'item': newUser});
+                        });
+                        Navigator.of(context).pop();
                   }, child: const Text('OK!')))
                 ],
               )
