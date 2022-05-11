@@ -136,9 +136,7 @@ class _HomeState extends State<Home> {
                   SizedBox(width: 15),
                   Expanded(
                       child: ElevatedButton(onPressed: (){
-                        setState(() {
-                          FirebaseFirestore.instance.collection('clients').add({'item': newUser});
-                        });
+                        FirebaseFirestore.instance.collection('clients').add({'item': newUser});
                         Navigator.of(context).pop();
                   }, child: const Text('OK!')))
                 ],
